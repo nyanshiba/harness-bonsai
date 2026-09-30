@@ -1,0 +1,96 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "clinicaltrials": {
+            "command": [
+                "bunx",
+                "clinicaltrialsgov-mcp-server@latest"
+            ],
+            "enabled": true,
+            "environment": {
+                "MCP_LOG_LEVEL": "info",
+                "MCP_TRANSPORT_TYPE": "stdio"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
+        "crossref": {
+            "enabled": true,
+            "oauth": false,
+            "timeout": 30000,
+            "type": "remote",
+            "url": "https://crossref.caseyjhand.com/mcp"
+        },
+        "elsevier": {
+            "command": [
+                "node",
+                "/root/health/.opencode-mcp/elsevier-mcp/dist/index.js"
+            ],
+            "enabled": false,
+            "environment": {
+                "ELSEVIER_API_KEY": "{env:ELSEVIER_API_KEY}",
+                "ELSEVIER_INST_TOKEN": "{env:ELSEVIER_INST_TOKEN}"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
+        "openalex": {
+            "command": [
+                "bunx",
+                "@cyanheads/openalex-mcp-server@latest"
+            ],
+            "enabled": true,
+            "environment": {
+                "MCP_LOG_LEVEL": "info",
+                "MCP_TRANSPORT_TYPE": "stdio",
+                "OPENALEX_API_KEY": "{env:OPENALEX_API_KEY}",
+                "OPENALEX_MAILTO": "{env:OPENALEX_MAILTO}"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
+        "pubmed": {
+            "command": [
+                "bunx",
+                "@cyanheads/pubmed-mcp-server@latest"
+            ],
+            "enabled": true,
+            "environment": {
+                "EUROPEPMC_EMAIL": "{env:EUROPEPMC_EMAIL}",
+                "MCP_LOG_LEVEL": "info",
+                "MCP_TRANSPORT_TYPE": "stdio",
+                "NCBI_ADMIN_EMAIL": "{env:NCBI_ADMIN_EMAIL}",
+                "NCBI_API_KEY": "{env:NCBI_API_KEY}",
+                "UNPAYWALL_EMAIL": "{env:UNPAYWALL_EMAIL}"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
+        "semantic-scholar": {
+            "command": [
+                "bunx",
+                "-y",
+                "@xbghc/semanticscholar-mcp"
+            ],
+            "enabled": true,
+            "environment": {
+                "SEMANTIC_SCHOLAR_API_KEY": "{env:SEMANTIC_SCHOLAR_API_KEY}"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
+        "unpaywall": {
+            "command": [
+                "bunx",
+                "-y",
+                "unpaywall-mcp"
+            ],
+            "enabled": true,
+            "environment": {
+                "UNPAYWALL_EMAIL": "{env:UNPAYWALL_EMAIL}"
+            },
+            "timeout": 30000,
+            "type": "local"
+        }
+    }
+}

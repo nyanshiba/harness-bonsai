@@ -1,0 +1,3 @@
+{
+  "plugins": ["@prevalentware/opencode-loop-plugin@0.1.8"]
+}

@@ -1,0 +1,21 @@
+{
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": [
+          "bunx",
+          "-y",
+          "@playwright/mcp@latest",
+          "--headless",
+          "--isolated",
+          "--caps",
+          "storage,network",
+          "--no-sandbox",
+          "--executable-path",
+          "/usr/bin/chromium-browser"
+        ]
+      }
+    }
+  }
+}
