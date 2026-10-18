@@ -167,6 +167,13 @@ cat ~/.config/opencode/service.json
 出先からアクセスするために、同一ホストで `cloudflared tunnel` (`tunnel run`、`--url` を含む) を動かす場合は、既定の localhost のままでよい。  
 Connector モードや [Workers VPC via Mesh](https://github.com/nyanshiba/workers/tree/main/opencode) で使う場合は `0.0.0.0` で LISTEN する必要がある。
 
+### Web UIの使い方
+
+Web UIではブラウザのLocalStorageに保存される設定があり、以下はキャッシュ削除時に都度再設定が必要。
+- `opencode2 models` にあるモデルが Web UI で選べない: ドロップダウンメニューのモデルを管理からトグルで有効化
+- `/agents` が選べない: 設定 -> 環境設定でエージェントを表示
+- 設定 -> 環境設定 -> タイムラインの詳細のオススメはグループ全て無効、折り畳む全て有効
+
 ## 付録 移植メモ
 
 他ハーネスへの持ち運び用の分類である。共通規格から移す順序で使う。
