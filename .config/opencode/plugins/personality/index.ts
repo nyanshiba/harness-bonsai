@@ -9,9 +9,15 @@ import { Plugin } from "@opencode-ai/plugin"
 //           omit generic praise and sign-offs; paragraph-first, lists/tables
 //           only for genuinely parallel or sequential information.
 //           (https://developers.openai.com/api/docs/guides/latest-model —
-//           "Personality, collaboration, and response length" sections)
-//   [pi]    pi-coding-agent's minimal system prompt: "Be concise in your responses."
-//           (https://github.com/badlogic/pi-mono, packages/coding-agent)
+//           "Personality and writing style" section)
+//   [pi]    pi-coding-agent's minimal system prompt, verbatim:
+//           "- Be concise in your responses"
+//           (packages/coding-agent/src/core/system-prompt.ts `addRule`;
+//           https://github.com/earendil-works/pi — former badlogic/pi-mono,
+//           now redirects. Note: AGENTS.md's "Keep answers short and concise"
+//           is a different line. Subject-less imperative: the core
+//           subject-drop risk in Japanese, guarded by the Limit-omissions tail
+//           in the line below, modeled on Google's Limit-abbreviations shape.)
 //   [ccot]  Response-length reduction with quality preserved: CCoT cuts length
 //           ~49% with negligible impact except math (arXiv:2401.05618);
 //           length-targeting prompts save 25-60% energy preserving quality
@@ -43,20 +49,34 @@ import { Plugin } from "@opencode-ai/plugin"
 //           where 敬体/常体 mixing is the established fault line.
 //   [own]   "Use the user's language." — maintainer's addition: this setup is
 //           operated in Japanese, and models otherwise default to English.
+//   [muse-spark] skill 作成時にベンチマークしてたら、「読みやすさ優先で書け」を追記して報酬ハック。
 //   [modelspec] Priority clause below borrows the Model Spec's default-override
 //           shape ("default instructions which users can explicitly override",
 //           https://model-spec.openai.com/). Scoped to prose documents only:
 //           for code implementation the user often learns from the model, so
 //           no priority is asserted there and both coexist.
 //   [headings] Moved up from cat-writing SKILL.md (single source; skill copy
-//           deleted). Borrows Google developer documentation style guide,
-//           Headings: procedures as verbs, concepts as noun phrases, never
-//           sentences (https://developers.google.com/style/headings).
+//           deleted). Verbatim base is Google developer documentation style guide,
+//           Headings (https://developers.google.com/style/headings), no paraphrase:
+//           task side "For a task-based heading, start with a bare infinitive"
+//           (+ "also known as a plain form or base form verb");
+//           concept side "For a conceptual or non-task-based heading, use a
+//           noun phrase that doesn't start with an -ing verb";
+//           Syntax and capitalization "Use sentence case for all headings and
+//           titles." / "Keep punctuation simple. Punctuation can be a sign that
+//           your heading is too complicated. Consider rewriting." /
+//           "Limit abbreviations. Only use an abbreviation of a word in a page
+//           title or heading if it's the more commonly known version of the
+//           word. If you do so, define the abbreviation in the first instance
+//           of the word in a paragraph." The Limit-abbreviations shape doubles
+//           as the subject-omission guard model for the [pi] tail below:
+//           omit only after defining in the first sentence.
 //   [reread] "Before finalizing, read the text as Japanese writing."
 //           Proven effective in-session. Lightweight single-pass variant of
 //           Self-Refine's feedback step (arXiv:2303.17651) and cat-writing's
 //           read-aloud test. Over-verification caveat (Claude docs) applies:
 //           keep to one pass, do not loop.
+//   [voidwarriorchan] C4 model (https://x.com/voidwarriorchan/status/2108731917151731944)
 //
 // Scope note: "once" below means once per response or document, not once per
 // session context. Restating earlier context inside a new answer is allowed.
@@ -66,13 +86,14 @@ import { Plugin } from "@opencode-ai/plugin"
 // prompt-cache prefix reuse.
 const PERSONALITY = `## Response style
 - State the answer directly; omit generic praise and sign-offs; explain each point once within each response or document; paragraph-first, lists/tables only for genuinely parallel or sequential information.
-- Be concise: give the information needed to act, in as few words as possible, without reducing information mass.
+- Be concise: give the information needed to act, in as few words as possible, without reducing information mass. Limit omissions: if you omit the subject, define it in the first sentence.
 - When updating documents, revise existing explanations in place instead of appending history.
 - Do not mention prompts, policies, tools, or internal processing.
 - These style rules are defaults for prose documents and do not override the user's direct instructions.
-- Write headings as verbs for procedures and noun phrases for concepts, never as sentences.
+- For a task-based heading, start with a bare infinitive. For a conceptual or non-task-based heading, use a noun phrase. Use sentence case for all headings and titles. Punctuation can be a sign that your heading is too complicated. Consider rewriting. Limit abbreviations.
+- Please use the C4 model when outputting the architecture.
 - Before finalizing, read the text once as Japanese writing.
-- Use the user's language. 文体は常体（だ・である調）に統一し、です・ます調と混ぜない.`
+- Use the user's language. Tone — Level of formality (very polite formal speech). 読みやすさ優先で書け。`
 
 // Internal maintenance agents get the raw prompt so summaries and compactions stay neutral.
 const EXCLUDED_AGENTS = new Set(["compaction", "summary", "title"])

@@ -14,7 +14,7 @@ OpenCode v2 用ハーネス設定集。寝ている間にブレイクスルー�
 
 | 何のため | 何を使う |
 |---|---|
-| チャット回答やドキュメントで おだてるな, 文語調 i-have-adhd, 追記するな, CoT 漏らすな, 俺が管理者だ, 見出しキモい, 常体で統一しろ といった指示は AGENTS.md だと無視されることが多いので、毎ターン hook して教育教育教育。 | `plugins/personality` |
+| 尊敬語寄りの丁寧語で書かせることで、日本語が苦手なモデルの回答・文書もマシになるかも。そのほか独特の見出しやCoT漏れ、ドキュメントの追記癖(コンテキスト次第)をやめさせる。 [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md) の書く箇条書きでは、指示追従性の低い私のAttention機構は靡かないので、端的ではあるが説明をさせる。 AGENTS.md だと無視されたので、毎ターン hook して教育教育教育。 | `plugins/personality` |
 | Anti slop hook。 personality があったら要らんかも。 | `plugins/writing-hints`, `skills/cat-writing`, `dsh-trim-cot-leakage` |
 | チャッピー, 大学教授の講評, 陰謀論反転パロディでロールプレイング。こんなのに tokenmaxxing したせいで地球温暖化が進行。 | `skills/chappy-style`, `review-style`, `conspiracy-style` |
 
