@@ -96,7 +96,7 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
     systemctl restart systemd-networkd
     ```
   - `sysctl.d/rfc8981.conf` — TEMP_VALID_LIFETIME 短縮と TCP パフォーマンスチューニング
-  - `systemd/network/eth0.network.d/rfc7217.conf` RFC 7217 によるセキュリティ
+  - `systemd/network/eth0.network.d/rfc7217.conf` 通常の webfetch は一時アドレスから行い、 [nyanshiba/warp-router で NAT66 される prefix](https://github.com/nyanshiba/warp-router/blob/main/radvd.conf) は固定アドレスで接続する。
 
 ### リポジトリの取得
 
@@ -164,8 +164,11 @@ cat ~/.config/opencode/service.json
 }
 
 ```
-出先からアクセスするために、同一ホストで `cloudflared tunnel` (`tunnel run`、`--url` を含む) を動かす場合は、既定の localhost のままでよい。  
-Connector モードや [Workers VPC via Mesh](https://github.com/nyanshiba/workers/tree/main/opencode) で使う場合は `0.0.0.0` で LISTEN する必要がある。
+LANや出先からアクセスするために OpenTunnel `opencode pair --remote` 相当を自前で用意するとき、同一ホストで `cloudflared tunnel` (`tunnel run`、`--url` を含む) を動かす場合は、既定の localhost のままでよい。  
+LAN内でのルーティングや cloudflared Connector モード、 [Workers VPC via Mesh](https://github.com/nyanshiba/workers/tree/main/opencode) からの接続は `0.0.0.0` で LISTEN する必要がある。  
+cf. https://opencode.ai/v2/docs/cli/web/#configure
+
+[OpenCode App](https://x.com/thdxr/status/2108624901108375854) もこれら通常の L3 routing を介した接続に対応している。
 
 ### Web UIの使い方
 
