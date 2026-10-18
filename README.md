@@ -40,6 +40,7 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
 | 各 agents のガードレール | `opencode.json` の permissions |
 | `opencode2 service restart` 実行を阻止 | `plugins/service-guard` |
 | Webfetch エラーハンドリング。ハルシネーションで回答せず、セキュリティ担当者(俺)に訊いてポリシー解除を待つ | `plugins/tool-hints` |
+| ジェネリック Grok 。引用や、ツリーの任意の位置の URL が 1 件あれば、全ポストを網羅的に取得。 NAT セッション数は x.com と cdn.syndication.twimg.com の 2 つだけ。 | `plugins/x-thread` |
 | [Spotify shunt](https://engineering.atspotify.com/2026/9/portal-by-spotify-cut-my-claude-code-token-usage-by-90) の事例を参考にしたトークン節約 PoC 。 subagents *-researcher のコーディング版。 | `plugins/delegate-guard`, `agents/bulk-reader`, `commands/bulk-read` |
 
 ### HITL から HOOTL へ
@@ -187,5 +188,5 @@ Web UIではブラウザのLocalStorageに保存される設定があり、以�
 他ハーネスへの持ち運び用の分類である。共通規格から移す順序で使う。
 
 - 共通規格 (Markdown指示文・SKILL・MCP定義として移植可能) — `AGENTS.md`、`agents/build`, `build-auto`, `feed-triage`、`commands/grounding`、`skills` 全部
-- opencode 固有 (`@opencode-ai/plugin` の hook・permission・API形状に依存) — `opencode.json` 本体、`plugins` 全部
+- opencode 固有 (`@opencode/plugin` の hook・permission・API形状に依存) — `opencode.json` 本体、`plugins` 全部
 - 両義 (本文は共通・配線が固有) — `opencode.json` 内 MCP 定義、`agents/plan`, `bulk-reader`, `websearch-researcher`, `linkding-researcher`、`commands/bulk-read`, `feed-triage`
