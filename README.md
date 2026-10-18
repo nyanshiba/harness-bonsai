@@ -26,6 +26,7 @@ OpenCode v2 用ハーネス設定集。寝ている間にブレイクスルー�
 |---|---|
 | [デフォルトのシステムプロンプト](https://github.com/anomalyco/opencode/tree/dev/packages/opencode/src/session/prompt/)の繰り返し表現を削除して、機能を維持したままコスト削減 | `agents/plan`, `build`, `build-auto` |
 | ビルトインツールの websearch や webfetch 、ブックマークやタブを蓄積した [nyanshiba/workers/linkding-mcp](https://github.com/nyanshiba/workers/tree/main/linkding-mcp) での裏取り調査。セキュリティやコンテキスト希釈の都合上 subagent にやらせるが、コストは増すかも。 | `AGENTS.md`, `opencode.json` の permissions, `agents/websearch-researcher`, `linkding-researcher`, `commands/grounding`, `skills/linkding-search`, `surveyor` |
+| 俺の体調は本人でなく [trenerok/oura-mcp-server](https://github.com/trenerok/oura-mcp-server) でスマートリングに訊け。 | `health/opencode.json` |
 | セッションに別のプロジェクト(作業ディレクトリ)の skill やコンテキストを読ませ、触らせる | `plugins/session-move` |
 | 別のセッションの文脈・動機を取得して、 Surrogation されまくった手の施しようのない Slop を、文体がキモいだけの修正可能な Slop に。現在のハーネスは電脳でもアミュスフィアでもないので、並列化で言外に意図を読み取ったり、アバターが不意に涙を流してしまうことで家族仲を円滑にすることはないよ。 | `plugins/handoff`, `skills/motive-salvage` |
 | 会話のコンテキストを**ユーザーのプロンプト付き**で [Cloudflare Temporary Accounts](https://blog.cloudflare.com/ja-jp/temporary-accounts/) で公開。真意を隠して出力だけ公開するから Slop って言われんだよ。 | `skills/publish-cot` |
@@ -88,7 +89,7 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
       - チャット送信後に止まる → 同ログで `Failed to drain Session` を検索。`Schema validation failed` ならフックの注入形状不良、課金系ならプロバイダー側の問題でプラグイン無関係
       - 1件ずつ外して再起動→疎通確認で特定する
     - `service.json` — [出先で OpenCode を使う](#動作環境の構築)
-  - `health/opencode.json` — 医学文献を漁る用の MCP が色々。
+  - `health/opencode.json` — 医学文献を漁る用の MCP が色々、スマートリング
   - `llama/opencode.json` — ローカルLLM llama.cpp への OpenAI 互換 provider 定義。`websearch` は許可制。接続先は利用者側の endpoint に書き換える
 - `/home/playwright/`
   - `playwright/opencode.json` — headless Chromium によるテスト・全文取得。  

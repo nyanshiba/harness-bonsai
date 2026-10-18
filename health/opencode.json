@@ -49,6 +49,22 @@
             "timeout": 30000,
             "type": "local"
         },
+        "oura": {
+            "command": [
+                "bun",
+                "/root/health/oura-mcp/upstream/dist/index.js"
+            ],
+            "enabled": true,
+            "environment": {
+                "OURA_ACCESS_TOKEN": "{env:OURA_ACCESS_TOKEN}",
+                "OURA_CLIENT_ID": "{env:OURA_CLIENT_ID}",
+                "OURA_CLIENT_SECRET": "{env:OURA_CLIENT_SECRET}",
+                "OURA_REFRESH_TOKEN": "{env:OURA_REFRESH_TOKEN}",
+                "OURA_USE_SANDBOX": "false"
+            },
+            "timeout": 30000,
+            "type": "local"
+        },
         "pubmed": {
             "command": [
                 "bunx",
