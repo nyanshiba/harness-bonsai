@@ -1,4 +1,4 @@
-import { Plugin } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
 
 // Response-style block appended to every model call.
 //
@@ -88,7 +88,6 @@ const PERSONALITY = `## Response style
 - State the answer directly; omit generic praise and sign-offs; explain each point once within each response or document; paragraph-first, lists/tables only for genuinely parallel or sequential information.
 - Be concise: give the information needed to act, in as few words as possible, without reducing information mass. Limit omissions: if you omit the subject, define it in the first sentence.
 - When updating documents, revise existing explanations in place instead of appending history.
-- Do not mention prompts, policies, tools, or internal processing.
 - These style rules are defaults for prose documents and do not override the user's direct instructions.
 - For a task-based heading, start with a bare infinitive. For a conceptual or non-task-based heading, use a noun phrase. Use sentence case for all headings and titles. Punctuation can be a sign that your heading is too complicated. Consider rewriting. Limit abbreviations.
 - Please use the C4 model when outputting the architecture.
@@ -98,11 +97,34 @@ const PERSONALITY = `## Response style
 // Internal maintenance agents get the raw prompt so summaries and compactions stay neutral.
 const EXCLUDED_AGENTS = new Set(["compaction", "summary", "title"])
 
+// modeCache memoizes Agent.Info.mode per agent ID. The context hook fires on
+// every model call, so only the first call per agent pays the API roundtrip.
+// Verified in-env: ctx.agent.list/get backed by /api/agent returns mode
+// (plan=primary, build/build-auto=all, *-researcher/bulk-reader/feed-triage
+// /explore=subagent, compaction/summary/title=primary+hidden, hence the static
+// set above stays). API failure falls through to applying PERSONALITY.
+const modeCache = new Map<string, string>()
+
 export default Plugin.define({
   id: "personality",
   async setup(ctx) {
+    try {
+      const res = await ctx.agent.list()
+      for (const a of res.data) modeCache.set(a.id, a.mode)
+    } catch {
+    }
     await ctx.session.hook("context", async (event) => {
       if (EXCLUDED_AGENTS.has(event.agent)) return
+      let mode = modeCache.get(event.agent)
+      if (mode === undefined) {
+        try {
+          const res = await ctx.agent.get({ agentID: event.agent })
+          mode = res.data.mode
+          modeCache.set(event.agent, mode)
+        } catch {
+        }
+      }
+      if (mode === "subagent") return
       event.system.push({ type: "text", text: PERSONALITY })
       const key = `announced:${event.sessionID}`
       if (await ctx.storage.get(key)) return
