@@ -11,9 +11,10 @@
           "--isolated",
           "--caps",
           "storage,network",
-          "--no-sandbox",
+          "--browser",
+          "chromium",
           "--executable-path",
-          "/usr/bin/chromium-browser"
+          "/usr/lib64/chromium-browser/headless_shell"
         ]
       }
     }

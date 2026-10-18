@@ -6,6 +6,48 @@ else
   server=$@
 fi
 
+
+echo repos/opencode/
+rsync -rtv \
+  --exclude='.*' \
+  --exclude='opencode.json' \
+  --exclude='go' \
+  --exclude='node_modules/' \
+  --exclude='plan/v380-web' \
+  "$server:/root/" "../opencode/root/"
+
+rsync -rtv \
+  --exclude='.*' \
+  --exclude='opencode.json' \
+  --exclude='node_modules/' \
+  "$server:/home/playwright/" "../opencode/home/playwright/"
+
+
+echo repos/opencode-bonsai/
+rsync -rtvm \
+  --exclude='node_modules/' \
+  --include='***/' \
+  --include='.config/opencode/***' \
+  --include='health/opencode.json' \
+  --include='llama/opencode.json' \
+  --include='playwright/opencode.json' \
+  --exclude='*' \
+  "$server:/root/" "../opencode-bonsai/"
+
+rsync -rtv "$server:/home/playwright/playwright/opencode.json" "../opencode-bonsai/playwright/"
+
+echo /etc/
+rsync -rtv \
+  --include='sysctl.d/***' \
+  \
+  --include='systemd/' \
+  --include='systemd/network/' \
+  --include='systemd/network/eth0.network.d/***' \
+  \
+  --exclude='*' \
+  "$server:/etc/" "../opencode-bonsai/etc/"
+
+
 echo repos/skills/
 rsync -rtvm --delete \
   --exclude='.git/' \
@@ -30,36 +72,6 @@ rsync -rtvm --delete \
   --exclude='*' \
   "$server:/root/" "../skills/"
 
-echo repos/opencode-bonsai/
-rsync -rtvm \
-  --exclude='node_modules/' \
-  --include='***/' \
-  --include='.config/opencode/***' \
-  --include='health/opencode.json' \
-  --include='llama/opencode.json' \
-  --include='playwright/opencode.json' \
-  --exclude='*' \
-  "$server:/root/" "../opencode-bonsai/"
-
-echo /etc/
-rsync -rtv \
-  --include='sysctl.d/***' \
-  \
-  --include='systemd/' \
-  --include='systemd/network/' \
-  --include='systemd/network/eth0.network.d/***' \
-  \
-  --exclude='*' \
-  "$server:/etc/" "../opencode-bonsai/etc/"
-
-echo repos/opencode/
-rsync -rtv \
-  --exclude='.*' \
-  --exclude='opencode.json' \
-  --exclude='go' \
-  --exclude='node_modules/' \
-  --exclude='plan/v380-web' \
-  "$server:/root/" "../opencode/root/"
 
 echo saving opencode.db
 ssh -t $server "opencode2 api get /api/session/active" | grep -q '"type":"running"' && {

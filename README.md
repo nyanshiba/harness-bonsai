@@ -49,6 +49,7 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
 | 同じディレクトリ・ファイルについて何度も ask される煩わしさを1回にする | `plugins/ask-once` |
 | rate-limit 時に固定動作させたいやんごとなき理由があるとか | `plugins/rate-limit-command`, `opencode.json` の plugins.options.command |
 | [@am09_21](https://x.com/am09_21/status/2097596822134968603) の 2. を参考に、人間とAIを分離し、外側は人間が査読するだけにして定期実行と採否判定を自動化する。ぶっちゃけそんなネタないし 1. をやるべきだったかも。 | `agents/feed-triage`, `commands/feed-triage`, `cli.json` の loop plugin |
+| Web 表示の E2E テストの自動化 | `playwright/opencode.json` |
 
 ### 具体的なユースケース
 
@@ -89,7 +90,11 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
     - `service.json` — [出先で OpenCode を使う](#動作環境の構築)
   - `health/opencode.json` — 医学文献を漁る用の MCP が色々。
   - `llama/opencode.json` — ローカルLLM llama.cpp への OpenAI 互換 provider 定義。`websearch` は許可制。接続先は利用者側の endpoint に書き換える
-  - `playwright/opencode.json` — headless Chromium による全文取得用。`--isolated`・`--headless`
+- `/home/playwright/`
+  - `playwright/opencode.json` — headless Chromium によるテスト・全文取得。  
+    `--isolated` root では `--no-sandbox` になってしまうので非特権ユーザ。  
+    `--browser chromium` Firefox は専用フォークのため不採用。  
+    `--headless` `chromium-headless` のみ最小導入した (`--setopt=install_weak_deps=False`、133パッケージ)。
 - `/etc/` — 主に IPv6 環境向けのネットワーク調整。反映:
     ```sh
     sysctl --system
