@@ -1,4 +1,4 @@
-import { Plugin } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
 import { statSync } from "node:fs"
 import { homedir } from "node:os"
 import { resolve } from "node:path"

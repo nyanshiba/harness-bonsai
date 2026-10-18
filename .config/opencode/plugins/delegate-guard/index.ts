@@ -1,4 +1,4 @@
-import { Plugin } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
 import { statSync, readFileSync } from "node:fs"
 
 // Large-read guard: shunt heavy reads to /bulk-read delegation.
