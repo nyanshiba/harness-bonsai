@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "autoupdate": false,
+  "update": "disable",
   "plugins": [
     "/root/.config/opencode/plugins/personality",
     "/root/.config/opencode/plugins/tool-hints",
@@ -9,7 +9,6 @@
     "/root/.config/opencode/plugins/service-guard",
     "/root/.config/opencode/plugins/session-move",
     "/root/.config/opencode/plugins/writing-hints",
-    "@prevalentware/opencode-loop-plugin@0.1.8",
     "/root/.config/opencode/plugins/handoff",
     {
       "package": "/root/.config/opencode/plugins/rate-limit-command",

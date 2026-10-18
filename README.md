@@ -24,7 +24,7 @@ OpenCode v2 用ハーネス設定集。寝ている間にブレイクスルー�
 
 | 何のため | 何を使う |
 |---|---|
-| [デフォルトのシステムプロンプト](https://github.com/anomalyco/opencode/tree/dev/packages/opencode/src/session/prompt/)の繰り返し表現を削除して、機能を維持したままコスト削減 | `agents/plan`, `build`, `build-auto` |
+| デフォルトの [system prompt](https://github.com/anomalyco/opencode/blob/dev/packages/core/src/session/runner/prompt/system.txt) ~~[(旧版)](https://github.com/anomalyco/opencode/tree/dev/packages/opencode/src/session/prompt/)~~ 及び [plan モード指示](https://github.com/anomalyco/opencode/blob/dev/packages/core/src/plugin/plan.ts), [tool guidance](https://github.com/anomalyco/opencode/blob/dev/packages/core/src/session/system-prompt.ts) の [モデル固有の指示](https://github.com/anomalyco/opencode/tree/dev/packages/core/src/plugin/system-prompt) や繰り返し表現を削除して、機能を維持したままコスト削減 | `agents/plan`, `build`, `build-auto` |
 | ビルトインツールの websearch や webfetch 、ブックマークやタブを蓄積した [nyanshiba/workers/linkding-mcp](https://github.com/nyanshiba/workers/tree/main/linkding-mcp) での裏取り調査。セキュリティやコンテキスト希釈の都合上 subagent にやらせるが、コストは増すかも。 | `AGENTS.md`, `opencode.json` の permissions, `agents/websearch-researcher`, `linkding-researcher`, `commands/grounding`, `skills/linkding-search`, `surveyor` |
 | 俺の体調は本人でなく [trenerok/oura-mcp-server](https://github.com/trenerok/oura-mcp-server) でスマートリングに訊け。 | `health/opencode.json` |
 | セッションに別のプロジェクト(作業ディレクトリ)の skill やコンテキストを読ませ、触らせる | `plugins/session-move` |
@@ -77,7 +77,6 @@ AGENTS.md に書いたのに○○しやがった(してくれなかった)！�
       # 反映
       opencode2 reload
       ```
-    - `cli.json` — CLI プラグイン (`@prevalentware/opencode-loop-plugin`)。`/loop` を提供
     - `plugins/` — OpenCode 固有のサーバープラグイン。サーバー側で動くため TUI・Web・API の全クライアントから有効になる (`@opencode/plugin/tui` の CLI プラグインとは別物で、ここには置かない)。動作には、各ディレクトリで依存関係のインストール `bun install` が必須 (`npm install` でもよい)。
       ```sh
       export PATH="$HOME/.bun/bin:$PATH"

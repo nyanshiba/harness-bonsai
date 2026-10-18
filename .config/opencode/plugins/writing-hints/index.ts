@@ -1,5 +1,5 @@
-import { Plugin } from "@opencode-ai/plugin"
-import { statSync, readFileSync } from "node:fs"
+import { Plugin } from "@opencode/plugin"
+import { readFileSync, statSync } from "node:fs"
 
 // Just-in-time writing reminder for long-form documents.
 //
@@ -13,19 +13,40 @@ import { statSync, readFileSync } from "node:fs"
 // deliver the reminder when a document write completes, not on every call.
 // Flat cost otherwise: zero.
 //
-// Mechanism note: like tool-hints, this appends text best-effort inside
-// try/catch and never breaks tool execution. The hook delivers timing only;
-// review quality itself is not enforced.
+// Delivery: `execute.after` only records the session once a long .md write
+// completes; the next model call's `context` hook pushes the reminder into the
+// system prompt once, so the model reads it before it finalizes the response
+// that follows the write. The hook delivers timing only; review quality itself
+// is not enforced.
 const MIN_LINES = 100
 
-const REMINDER =
-  "Before finalizing this document, load the `cat-writing` and " +
-  "`dsh-trim-cot-leakage` skills and apply their checklists."
+const REMINDER = `<system-reminder>
+Before finalizing this document, load the \`cat-writing\` and \`dsh-trim-cot-leakage\` skills and apply their checklists.
+</system-reminder>`
 
-function targetPath(input: unknown): string | undefined {
-  if (typeof input !== "object" || input === null) return undefined
-  const filePath = (input as { filePath?: unknown }).filePath
-  return typeof filePath === "string" ? filePath : undefined
+// Auxiliary requests reuse the session hook identity; they must not consume
+// the pending reminder before the agent loop reads it.
+const EXCLUDED_AGENTS = new Set(["compaction", "summary", "title"])
+
+const pending = new Set<string>()
+
+// The v2 edit/write tools take `path`, and write reports the resolved path as
+// `target` in its output. The earlier `filePath` read matched neither, so the
+// reminder never armed at all.
+function resolvedPath(event: unknown): string | undefined {
+  const e = event as { input?: unknown; result?: { output?: unknown } }
+  const output = e?.result?.output
+  if (typeof output === "object" && output !== null) {
+    const target = (output as { target?: unknown }).target
+    if (typeof target === "string") return target
+  }
+  const input = e?.input
+  if (typeof input === "object" && input !== null) {
+    const i = input as { path?: unknown; filePath?: unknown }
+    if (typeof i.path === "string") return i.path
+    if (typeof i.filePath === "string") return i.filePath
+  }
+  return undefined
 }
 
 function lineCount(path: string): number | undefined {
@@ -48,17 +69,23 @@ export default Plugin.define({
       try {
         if (event.tool !== "edit" && event.tool !== "write") return
         if (event.status !== "completed") return
-        const path = targetPath((event as { input?: unknown }).input)
+        const path = resolvedPath(event)
         if (!path || !path.endsWith(".md")) return
         const lines = lineCount(path)
         if (lines === undefined || lines <= MIN_LINES) return
-        const target = event as { result?: { output?: unknown } }
-        if (target.result && typeof target.result.output === "string") {
-          if (target.result.output.includes("cat-writing")) return
-          target.result.output = `${target.result.output}\n\n${REMINDER}`
-        }
+        pending.add(event.sessionID)
       } catch {
         // Best-effort only: never break tool execution from a hint hook.
+      }
+    })
+
+    await ctx.session.hook("context", (event) => {
+      try {
+        if (EXCLUDED_AGENTS.has(event.agent)) return
+        if (!pending.delete(event.sessionID)) return
+        event.system.push({ type: "text", text: REMINDER })
+      } catch {
+        // Best-effort only: never break a model call from a hint hook.
       }
     })
   },
